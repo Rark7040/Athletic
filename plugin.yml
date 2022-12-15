@@ -1,0 +1,5 @@
+name: Athletic
+author: RarkHopper
+api: 4.1.0
+version: 1.0.0
+main: rarkhopper\athletic\AthleticPlugin
