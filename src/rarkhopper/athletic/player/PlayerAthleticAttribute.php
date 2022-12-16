@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace rarkhopper\athletic\attribute;
+namespace rarkhopper\athletic\player;
 
 class PlayerAthleticAttribute{
 	public bool $allowAthleticAction = true;

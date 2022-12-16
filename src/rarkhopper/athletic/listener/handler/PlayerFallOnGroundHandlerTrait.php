@@ -6,24 +6,25 @@ namespace rarkhopper\athletic\listener\handler;
 use pocketmine\network\mcpe\protocol\SetActorDataPacket;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
 use pocketmine\network\mcpe\protocol\types\entity\PropertySyncData;
-use rarkhopper\athletic\attribute\AttributesMap;
 use rarkhopper\athletic\event\PlayerFallOnGroundEvent;
+use rarkhopper\athletic\player\AthleticPlayerMap;
 
-trait PlayerFallOnGroundHandler{
+trait PlayerFallOnGroundHandlerTrait{
 	public function onFall(PlayerFallOnGroundEvent $ev):void{
-		$player = $ev->getPlayer();
-		$attr = AttributesMap::getInstance()->get($player);
+		$pure_player = $ev->getPlayer();
+		$player = AthleticPlayerMap::getInstance()->get($pure_player);
+		$attr = $player->getAttribute();
 		$attr->isJumping = false;
 		$attr->isBlockJumping = false;
 		
-		$metadata = clone $player->getNetworkProperties();
+		$metadata = clone $pure_player->getNetworkProperties();
 		$metadata->setGenericFlag(EntityMetadataFlags::SWIMMING, false);
 		$actor_data_pk = SetActorDataPacket::create(
-			$player->getId(),
+			$pure_player->getId(),
 			$metadata->getAll(),
 			new PropertySyncData([], []),
 			1
 		);
-		$player->getWorld()->broadcastPacketToViewers($player->getPosition(), $actor_data_pk);
+		$pure_player->getWorld()->broadcastPacketToViewers($pure_player->getPosition(), $actor_data_pk);
 	}
 }

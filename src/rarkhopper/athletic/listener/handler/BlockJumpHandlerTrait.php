@@ -10,7 +10,7 @@ use pocketmine\network\mcpe\protocol\types\entity\PropertySyncData;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use rarkhopper\athletic\event\PlayerDoubleJumpEvent;
 
-trait BlockJumpHandler{
+trait BlockJumpHandlerTrait{
 	public function onDoubleJump(PlayerDoubleJumpEvent $ev):void{
 		if(!$ev->isBlockJump()) return;
 		$player = $ev->getPlayer();
@@ -23,14 +23,14 @@ trait BlockJumpHandler{
 		$player->getWorld()->broadcastPacketToViewers($player->getPosition(), $sound_pk);
 		
 		//TODO Living::recalculateSize
-		$metadata = clone $player->getNetworkProperties();
-		$metadata->setGenericFlag(EntityMetadataFlags::SWIMMING, true);
-		$actor_data_pk = SetActorDataPacket::create(
-			$player->getId(),
-			$metadata->getAll(),
-			new PropertySyncData([], []),
-			1
-		);
-		$player->getWorld()->broadcastPacketToViewers($player->getPosition(), $actor_data_pk);
+//		$metadata = clone $player->getNetworkProperties();
+//		$metadata->setGenericFlag(EntityMetadataFlags::SWIMMING, true);
+//		$actor_data_pk = SetActorDataPacket::create(
+//			$player->getId(),
+//			$metadata->getAll(),
+//			new PropertySyncData([], []),
+//			1
+//		);
+//		$player->getWorld()->broadcastPacketToViewers($player->getPosition(), $actor_data_pk);
 	}
 }
