@@ -21,10 +21,9 @@ class BlockJumpTask extends Task{
 			if(!AthleticActions::validateGameMode($gameMode)) continue;
 			$this->updateOnGroundAttr($player);
 			
-			if(!$attr->canDoubleJump or $attr->isBlockJumping) continue;
+			if(!$attr->allowAthleticAction or $attr->isBlockJumping) continue;
 			if(!$this->isCollidedBlock($player) or $attr->isOnGround) continue;
-			$attr->isBlockJumping = true;
-			$player->setAllowFlight(true);
+			AthleticActions::setCanBlockJump($player);
 		}
 	}
 	

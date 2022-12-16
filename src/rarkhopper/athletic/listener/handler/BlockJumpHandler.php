@@ -22,6 +22,7 @@ trait BlockJumpHandler{
 		);
 		$player->getWorld()->broadcastPacketToViewers($player->getPosition(), $sound_pk);
 		
+		//TODO Living::recalculateSize
 		$metadata = clone $player->getNetworkProperties();
 		$metadata->setGenericFlag(EntityMetadataFlags::SWIMMING, true);
 		$actor_data_pk = SetActorDataPacket::create(

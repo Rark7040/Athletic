@@ -19,9 +19,8 @@ trait DoubleJumpHandler{
 		$gameMode = $player->getGamemode();
 		
 		if(!AthleticActions::validateGameMode($gameMode)) return;
-		if(!$attr->canDoubleJump) return;
-		$attr->isJumping = true;
-		$player->setAllowFlight(true);
+		if(!$attr->allowAthleticAction) return;
+		AthleticActions::setCanDoubleJump($player);
 	}
 	
 	public function onFly(PlayerToggleFlightEvent $ev):void{
@@ -30,7 +29,7 @@ trait DoubleJumpHandler{
 		
 		if(!AthleticActions::validateGameMode($player->getGamemode())) return;
 		if(!$ev->isFlying()) return;
-		if(!$attr->canDoubleJump or (!$attr->isJumping and !$attr->isBlockJumping)) return;
+		if(!$attr->allowAthleticAction or (!$attr->isJumping and !$attr->isBlockJumping)) return;
 		$player->setAllowFlight(false);
 		$attr->isJumping = false;
 		(new PlayerDoubleJumpEvent($player, $attr->isBlockJumping))->call();

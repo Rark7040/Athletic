@@ -9,6 +9,7 @@ use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\world\sound\ArrowHitSound;
+use rarkhopper\athletic\attribute\AttributesMap;
 
 class AthleticActions{
 	public static function validateGameMode(GameMode $gameMode):bool{
@@ -26,5 +27,17 @@ class AthleticActions{
 			0
 		);
 		$player->getWorld()->broadcastPacketToViewers($player->getPosition(), $sound_pk);
+	}
+	
+	public static function setCanDoubleJump(Player $player):void{
+		$attr = AttributesMap::getInstance()->get($player);
+		$attr->isJumping = true;
+		$player->setAllowFlight(true);
+	}
+	
+	public static function setCanBlockJump(Player $player):void{
+		$attr = AttributesMap::getInstance()->get($player);
+		$attr->isBlockJumping = true;
+		$player->setAllowFlight(true);
 	}
 }
