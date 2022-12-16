@@ -6,10 +6,15 @@ namespace rarkhopper\athletic\action;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
+use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\world\sound\ArrowHitSound;
 
 class AthleticActions{
+	public static function validateGameMode(GameMode $gameMode):bool{
+		return $gameMode->equals(GameMode::SURVIVAL()) or $gameMode->equals(GameMode::ADVENTURE());
+	}
+	
 	public static function doubleJump(Player $player):void{
 		$motion = $player->getDirectionVector()->multiply(0.4);
 		$motion->y = 0.6;
