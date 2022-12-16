@@ -22,7 +22,7 @@ class BlockJumpTask extends Task{
 			$this->updateOnGroundAttr($player);
 			
 			if(!$attr->canDoubleJump or $attr->isBlockJumping) continue;
-			if(!$this->isCollidedBlock($player)) continue;
+			if(!$this->isCollidedBlock($player) or $attr->isOnGround) continue;
 			$attr->isBlockJumping = true;
 			$player->setAllowFlight(true);
 		}
