@@ -9,6 +9,7 @@ use pocketmine\scheduler\ClosureTask;
 use rarkhopper\athletic\action\AthleticActions;
 use rarkhopper\athletic\AthleticPlugin;
 use rarkhopper\athletic\attribute\AttributesMap;
+use rarkhopper\athletic\event\PlayerDoubleJumpEvent;
 
 
 trait DoubleJumpHandler{
@@ -32,6 +33,7 @@ trait DoubleJumpHandler{
 		if(!$attr->canDoubleJump or (!$attr->isJumping and !$attr->isBlockJumping)) return;
 		$player->setAllowFlight(false);
 		$attr->isJumping = false;
+		(new PlayerDoubleJumpEvent($player, $attr->isBlockJumping))->call();
 		AthleticActions::doubleJump($player);
 		
 		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
