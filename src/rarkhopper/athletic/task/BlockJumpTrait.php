@@ -15,6 +15,7 @@ trait BlockJumpTrait{
 		if(!$attr->allowAthleticAction or $attr->isBlockJumping) return;
 		if(!$this->isCollidedBlock($player->getPure()) or $attr->isOnGround) return;
 		if(!$this->isOnAir($player->getPure())) return;
+		if(!$attr->isDoubleJumped) return;
 		$player->setCanBlockJump();
 	}
 	

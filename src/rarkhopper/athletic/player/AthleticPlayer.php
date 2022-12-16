@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\player;
 
-use pocketmine\math\Vector2;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
