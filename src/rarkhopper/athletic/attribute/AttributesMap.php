@@ -19,7 +19,11 @@ class AttributesMap{
 		return $this->attrMap[$player->getName()];
 	}
 	
-	public function clear(Player $player):void{
+	public function remove(Player $player):void{
 		unset($this->attrMap[$player->getName()]);
+	}
+	
+	public function clear(Player $player):void{
+		$this->attrMap[$player->getName()] = new PlayerAthleticAttribute;
 	}
 }
