@@ -89,7 +89,7 @@ trait SlidingHandlerTrait{
 	
 	protected function cancelSneak(Player $player):void{
 		if(!$player->isOnline()) return;
-		$player->setSneaking(false);
+		$player->toggleSneak(false);
 		$old = $player->getWorld()->getBlock($player->getPosition());
 		$old_pos = $player->getPosition();
 		$player->getWorld()->setBlock($old_pos, BlockFactory::getInstance()->get(Ids::FLOWING_WATER, 7));
