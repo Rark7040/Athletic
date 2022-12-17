@@ -16,9 +16,9 @@ class EachPlayersTask extends Task{
 		foreach(Server::getInstance()->getOnlinePlayers() as $pure){
 			$player = AthleticPlayerMap::getInstance()->get($pure);
 			
-			$this->updateOnGroundAttr($player);
 			$this->checkBlockJump($player);
 			$this->unsetFlying($player);
+			$this->updateOnGroundAttr($player);
 		}
 	}
 }

@@ -8,6 +8,7 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use rarkhopper\athletic\event\PlayerDoubleJumpEvent;
 
 class AthleticPlayer{
 	private Player $player;
@@ -35,7 +36,16 @@ class AthleticPlayer{
 		return GameMode::SURVIVAL()->equals($gameMode) or GameMode::ADVENTURE()->equals($gameMode);
 	}
 	
-	public function doubleJump():void{
+	public function doubleJump(bool $isBlockJump = false):void{
+		if($isBlockJump){
+			$this->attr->isBlockJumped = true;
+			$this->attr->isBlockJumping = false;
+			
+		}else{
+			$this->attr->isDoubleJumped = true;
+			$this->attr->isJumping = false;
+		}
+		(new PlayerDoubleJumpEvent($this->player, $isBlockJump))->call();
 		$direction = $this->player->getDirectionPlane()->multiply(0.6);
 		$motion = new Vector3($direction->x, 0.7, $direction->y);
 		$this->player->setMotion($motion);
@@ -56,5 +66,12 @@ class AthleticPlayer{
 	public function setCanBlockJump():void{
 		$this->attr->isBlockJumping = true;
 		$this->player->setAllowFlight(true);
+	}
+	
+	public function resetJumpAttributes():void{
+		$this->attr->isJumping = false;
+		$this->attr->isDoubleJumped = false;
+		$this->attr->isBlockJumping = false;
+		$this->attr->isBlockJumped = false;
 	}
 }

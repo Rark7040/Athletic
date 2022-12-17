@@ -5,9 +5,6 @@ namespace rarkhopper\athletic\listener\handler;
 
 use pocketmine\event\player\PlayerJumpEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
-use pocketmine\scheduler\ClosureTask;
-use rarkhopper\athletic\AthleticPlugin;
-use rarkhopper\athletic\event\PlayerDoubleJumpEvent;
 use rarkhopper\athletic\player\AthleticPlayerMap;
 
 
@@ -16,9 +13,8 @@ trait DoubleJumpHandlerTrait{
 		$player = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		
 		if(!$player->canAthleticAction()) return;
-		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask( //ブロック引っかかり対策
-			new ClosureTask(fn() => $player->setCanDoubleJump()), 3
-		);
+		if($player->getAttribute()->isDoubleJumped) return;
+		$player->setCanDoubleJump();
 	}
 	
 	public function onFly(PlayerToggleFlightEvent $ev):void{
@@ -27,20 +23,14 @@ trait DoubleJumpHandlerTrait{
 		$attr = $player->getAttribute();
 		
 		if(!$player->canAthleticAction()) return;
-		if(!$ev->isFlying()) return;
-		if(!$attr->allowAthleticAction or (!$attr->isJumping and !$attr->isBlockJumping)) return;
 		$pure_player->setAllowFlight(false);
-		(new PlayerDoubleJumpEvent($pure_player, $attr->isBlockJumping))->call();
-		$player->doubleJump();
 		
-		if($attr->isBlockJumping){
-			$attr->isBlockJumped = true;
-			
-			if($attr->isDoubleJumped) return;
+		if(!$ev->isFlying()) return;
+		if(!$attr->isJumping and !$attr->isBlockJumping) return;
+		$player->doubleJump($attr->isBlockJumping);
+		
+		if(!$attr->isDoubleJumped and $attr->isBlockJumped){
 			$player->setCanDoubleJump();
-			
-		}else{
-			$attr->isDoubleJumped = true;
 		}
 	}
 }
