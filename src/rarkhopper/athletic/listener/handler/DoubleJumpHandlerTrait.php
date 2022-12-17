@@ -36,6 +36,9 @@ trait DoubleJumpHandlerTrait{
 		if($attr->isBlockJumping){
 			$attr->isBlockJumped = true;
 			
+			if($attr->isDoubleJumped) return;
+			$player->setCanDoubleJump();
+			
 		}else{
 			$attr->isDoubleJumped = true;
 		}

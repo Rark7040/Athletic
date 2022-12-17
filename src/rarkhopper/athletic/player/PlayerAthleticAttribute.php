@@ -11,4 +11,5 @@ class PlayerAthleticAttribute{
 	public bool $isBlockJumped = false;
 	public bool $isOnGround = true;
 	public bool $isSliding = false;
+	public bool $keepSliding = false;
 }

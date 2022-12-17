@@ -3,24 +3,18 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
-use pocketmine\block\VanillaBlocks;
-use pocketmine\entity\EntitySizeInfo;
+use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\event\player\PlayerToggleSneakEvent;
+use pocketmine\event\player\PlayerToggleSwimEvent;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
-use pocketmine\network\mcpe\protocol\SetActorDataPacket;
-use pocketmine\network\mcpe\protocol\types\BlockPosition;
-use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
-use pocketmine\network\mcpe\protocol\types\entity\PropertySyncData;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
-use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
 use rarkhopper\athletic\AthleticPlugin;
 use rarkhopper\athletic\player\AthleticPlayer;
 use rarkhopper\athletic\player\AthleticPlayerMap;
-use ReflectionClass;
 
 trait SlidingHandlerTrait{
 	public function onSneak(PlayerToggleSneakEvent $ev):void{
@@ -39,15 +33,6 @@ trait SlidingHandlerTrait{
 		$pure = $player->getPure();
 		
 		if(!$pure->isSprinting() or $pure->isOnGround() or $player->getAttribute()->isDoubleJumped) return;
-		$metadata = clone $pure->getNetworkProperties();
-		$metadata->setGenericFlag(EntityMetadataFlags::SWIMMING, true);
-		$actor_data_pk = SetActorDataPacket::create(
-			$pure->getId(),
-			$metadata->getAll(),
-			new PropertySyncData([], []),
-			1
-		);
-		$pure->getWorld()->broadcastPacketToViewers($pure->getPosition(), $actor_data_pk);
 		$direction = $pure->getDirectionPlane()->multiply(0.7);
 		$motion = new Vector3($direction->x, -0.4, $direction->y);
 		$pure->setMotion($motion);
@@ -59,21 +44,8 @@ trait SlidingHandlerTrait{
 			0
 		);
 		$pure->getWorld()->broadcastPacketToViewers($pure->getPosition(), $sound_pk);
+		$pure->setSwimming();
 		
-		$ref = new ReflectionClass($pure);
-		$setSize = $ref->getMethod('setSize');
-		$getInitialSizeInfo = $ref->getMethod('getInitialSizeInfo');
-		$networkPropertiesDirty = $ref->getProperty('networkPropertiesDirty');
-		
-		$setSize->setAccessible(true);
-		$getInitialSizeInfo->setAccessible(true);
-		$networkPropertiesDirty->setAccessible(true);
-		
-		$size = $getInitialSizeInfo->invoke($pure);
-		$width = $size->getWidth();
-		$setSize->invoke($pure, (new EntitySizeInfo($width, $width, $width * 0.9))->scale($pure->getScale()));
-		$networkPropertiesDirty->setValue($pure,true);
-
 		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
 			new ClosureTask(fn() => $this->stopSliding($player)), 15
 		);
@@ -82,51 +54,48 @@ trait SlidingHandlerTrait{
 	private function stopSliding(AthleticPlayer $player):void{
 		if(!$player->getAttribute()->isSliding) return;
 		$pure = $player->getPure();
+		$topBlock = $pure->getWorld()->getBlock($pure->getPosition()->add(0, 1, 0));
 		$player->getAttribute()->isSliding = false;
-		$this->cancelSneak($pure);
-		$metadata = clone $pure->getNetworkProperties();
-		$metadata->setGenericFlag(EntityMetadataFlags::SNEAKING, false);
-		$metadata->setGenericFlag(EntityMetadataFlags::SWIMMING, false);
-		$actor_data_pk = SetActorDataPacket::create(
-			$pure->getId(),
-			$metadata->getAll(),
-			new PropertySyncData([], []),
-			1
-		);
-		$pure->getWorld()->broadcastPacketToViewers($pure->getPosition(), $actor_data_pk);
 		
-		$ref = new ReflectionClass($pure);
-		$setSize = $ref->getMethod('setSize');
-		$getInitialSizeInfo = $ref->getMethod('getInitialSizeInfo');
-		$networkPropertiesDirty = $ref->getProperty('networkPropertiesDirty');
+		if($topBlock->isSolid()){
+			$player->getAttribute()->keepSliding = true;
+			
+		}else{
+			$pure->setSwimming(false);
+			AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
+				new ClosureTask(fn() => $this->cancelSneak($pure)), 1
+			);
+		}
+	}
+	
+	public function onToggleSwim(PlayerToggleSwimEvent $ev):void{
+		$pure = $ev->getPlayer();
+		$attr = AthleticPlayerMap::getInstance()->get($pure)->getAttribute();
 		
-		$setSize->setAccessible(true);
-		$getInitialSizeInfo->setAccessible(true);
-		$networkPropertiesDirty->setAccessible(true);
+		if($attr->keepSliding){
+			if($ev->isSwimming()) return;
+			$attr->keepSliding = false;
+			
+			AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
+				new ClosureTask(fn() => $this->cancelSneak($pure)), 1
+			);
+			return;
+		}
 		
-		$size = $getInitialSizeInfo->invoke($pure);
-		$setSize->invoke($pure, $size->scale($pure->getScale()));
-		$networkPropertiesDirty->setValue($pure, true);
+		if(!$attr->isSliding) return;
+		$pure->setSwimming();
+		$ev->cancel();
 	}
 	
 	protected function cancelSneak(Player $player):void{
 		if(!$player->isOnline()) return;
-		$position = BlockPosition::fromVector3($player->getPosition()->add(0, 0, 0));
-		$player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
-			$position,
-			RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::WATER()->getFullId()),
-			UpdateBlockPacket::FLAG_NETWORK,
-			UpdateBlockPacket::DATA_LAYER_LIQUID
-		));
-		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(new ClosureTask(
-			function() use ($player, $position): void{
-				$player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
-					$position,
-					RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::AIR()->getFullId()),
-					UpdateBlockPacket::FLAG_NETWORK,
-					UpdateBlockPacket::DATA_LAYER_LIQUID
-				));
-			}
-		), 1);
+		$player->setSneaking(false);
+		$old = $player->getWorld()->getBlock($player->getPosition());
+		$old_pos = $player->getPosition();
+		$player->getWorld()->setBlock($old_pos, BlockFactory::getInstance()->get(Ids::FLOWING_WATER, 7));
+		
+		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
+			new ClosureTask(fn() => $player->getWorld()->setBlock($old_pos, $old)), 1
+		);
 	}
 }

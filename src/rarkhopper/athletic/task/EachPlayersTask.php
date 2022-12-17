@@ -12,7 +12,6 @@ class EachPlayersTask extends Task{
 	use UpdateOnGroundAttributeTrait;
 	use UnsetFlyingTrait;
 
-
 	public function onRun():void{
 		foreach(Server::getInstance()->getOnlinePlayers() as $pure){
 			$player = AthleticPlayerMap::getInstance()->get($pure);
