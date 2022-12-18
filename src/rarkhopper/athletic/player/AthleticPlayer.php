@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\player;
 
+use BlockJumpSound;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
@@ -38,6 +39,7 @@ class AthleticPlayer{
 	
 	public function doubleJump(bool $isBlockJump = false):void{
 		if($isBlockJump){
+			$this->player->getWorld()->addSound($this->player->getPosition(), new BlockJumpSound());
 			$this->attr->isBlockJumped = true;
 			$this->attr->isBlockJumping = false;
 			
