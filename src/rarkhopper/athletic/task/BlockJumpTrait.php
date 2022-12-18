@@ -15,7 +15,7 @@ trait BlockJumpTrait{
 		if($attr->isBlockJumped) return;
 		if(!$this->isMidAir($player->getPure()) or $attr->isOnGround) return;
 		if(!$this->isCollidedBlock($player->getPure())) return;
-		$player->setCanBlockJump();
+		$player->setAbleBlockJump();
 	}
 	
 	private function isMidAir(Entity $entity):bool{

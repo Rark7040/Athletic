@@ -39,6 +39,7 @@ trait SlidingHandlerTrait{
 			if($ev->isSwimming()) return;
 			$attr->keepSliding = false;
 			
+			//数ティック送らせないと水を設置する座標がずれる
 			AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
 				new ClosureTask(fn() => $player->cancelSneak()), 1
 			);

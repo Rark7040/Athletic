@@ -14,7 +14,7 @@ trait DoubleJumpHandlerTrait{
 		
 		if(!$player->canAthleticAction()) return;
 		if($player->getAttribute()->isDoubleJumped) return;
-		$player->setCanDoubleJump();
+		$player->setAbleDoubleJump();
 	}
 	
 	public function onFly(PlayerToggleFlightEvent $ev):void{
@@ -36,7 +36,7 @@ trait DoubleJumpHandlerTrait{
 		}
 		
 		if(!$attr->isDoubleJumped and $attr->isBlockJumped){
-			$player->setCanDoubleJump();
+			$player->setAbleDoubleJump();
 		}
 	}
 }

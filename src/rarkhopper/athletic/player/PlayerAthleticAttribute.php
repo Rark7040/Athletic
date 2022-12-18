@@ -23,6 +23,8 @@ class PlayerAthleticAttribute{
 	 * @var bool
 	 * this toggle works in conjunction with {@link Player::isOnGround()}
 	 * to determine whether the player was in the air during the previous tick.
+	 *
+	 * {@link UpdateOnGroundAttributeTrait::updateOnGroundAttr()}
 	 */
 	public bool $isOnGround = true;
 	

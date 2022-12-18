@@ -13,6 +13,9 @@ abstract class AthleticPlayerEvent extends Event{
 		$this->player = $player;
 	}
 	
+	/**
+	 * @return AthleticPlayer
+	 */
 	public function getAthleticPlayer():AthleticPlayer{
 		return $this->player;
 	}
