@@ -23,6 +23,8 @@ trait DoubleJumpHandlerTrait{
 		
 		if(!$player->canAthleticAction()) return;
 		$player->getPure()->setAllowFlight(false);
+		$player->getPure()->setFlying(false);
+		$ev->cancel();
 		
 		if(!$ev->isFlying()) return;
 		if(!$attr->isJumping and !$attr->isBlockJumping) return;

@@ -10,13 +10,11 @@ use rarkhopper\athletic\player\AthleticPlayerMap;
 class EachPlayersTask extends Task{
 	use BlockJumpTrait;
 	use UpdateOnGroundAttributeTrait;
-	use UnsetFlyingTrait;
 
 	public function onRun():void{
 		foreach(Server::getInstance()->getOnlinePlayers() as $pure){
 			$player = AthleticPlayerMap::getInstance()->get($pure);
 			$this->checkBlockJump($player);
-			$this->unsetFlying($player);
 			$this->updateOnGroundAttr($player);
 		}
 	}
