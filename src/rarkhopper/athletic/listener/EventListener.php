@@ -5,6 +5,7 @@ namespace rarkhopper\athletic\listener;
 
 use pocketmine\event\Listener;
 use rarkhopper\athletic\listener\handler\CancelFallDamageHandlerTrait;
+use rarkhopper\athletic\listener\handler\ClearAttributesHandlerTrait;
 use rarkhopper\athletic\listener\handler\DoubleJumpHandlerTrait;
 use rarkhopper\athletic\listener\handler\PlayerFallOnGroundHandlerTrait;
 use rarkhopper\athletic\listener\handler\SlidingHandlerTrait;
@@ -14,4 +15,5 @@ class EventListener implements Listener{
 	use PlayerFallOnGroundHandlerTrait;
 	use SlidingHandlerTrait;
 	use CancelFallDamageHandlerTrait;
+	use ClearAttributesHandlerTrait;
 }
