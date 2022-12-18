@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSwimEvent;

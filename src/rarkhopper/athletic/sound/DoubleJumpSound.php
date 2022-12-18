@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace rarkhopper\athletic\sound;
+
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\ClientboundPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;

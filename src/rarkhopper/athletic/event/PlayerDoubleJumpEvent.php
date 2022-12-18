@@ -17,6 +17,9 @@ class PlayerDoubleJumpEvent extends PlayerEvent implements Cancellable{
 		$this->isBlockJump = $isBlockJump;
 	}
 	
+	/**
+	 * @return bool
+	 */
 	public function isBlockJump():bool{
 		return $this->isBlockJump;
 	}
