@@ -11,20 +11,17 @@ trait BlockJumpTrait{
 	private function checkBlockJump(AthleticPlayer $player):void{
 		$attr = $player->getAttribute();
 		
-		if(!$player->validateGameMode()) return;
 		if(!$player->canAthleticAction()) return;
 		if($attr->isBlockJumped) return;
-		if(!$this->isOnAir($player->getPure()) or $attr->isOnGround) return;
+		if(!$this->isMidAir($player->getPure()) or $attr->isOnGround) return;
 		if(!$this->isCollidedBlock($player->getPure())) return;
 		$player->setCanBlockJump();
 	}
 	
-	private function isOnAir(Entity $entity):bool{
+	private function isMidAir(Entity $entity):bool{
 		$world = $entity->getWorld();
 		$v = $entity->getPosition()->asVector3()->floor();
-		$block = $world->getBlock($v->add(0, 1, 0));
-		
-		return !$block->isSolid();
+		return !$world->getBlock($v->add(0, 1, 0))->isSolid();
 	}
 	
 	private function isCollidedBlock(Entity $entity):bool{

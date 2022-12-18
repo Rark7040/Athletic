@@ -91,7 +91,7 @@ trait SlidingHandlerTrait{
 		$ev->cancel();
 	}
 	
-	protected function cancelSneak(Player $player):void{
+	private function cancelSneak(Player $player):void{
 		if(!$player->isOnline()) return;
 		$player->toggleSneak(false);
 		$vec = BlockPosition::fromVector3($player->getPosition()->add(0, 0, 0));

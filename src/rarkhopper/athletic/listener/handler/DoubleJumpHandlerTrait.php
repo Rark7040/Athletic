@@ -18,16 +18,20 @@ trait DoubleJumpHandlerTrait{
 	}
 	
 	public function onFly(PlayerToggleFlightEvent $ev):void{
-		$pure_player = $ev->getPlayer();
-		$player = AthleticPlayerMap::getInstance()->get($pure_player);
+		$player = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		$attr = $player->getAttribute();
 		
 		if(!$player->canAthleticAction()) return;
-		$pure_player->setAllowFlight(false);
+		$player->getPure()->setAllowFlight(false);
 		
 		if(!$ev->isFlying()) return;
 		if(!$attr->isJumping and !$attr->isBlockJumping) return;
-		$player->doubleJump($attr->isBlockJumping);
+		if($attr->isBlockJumping){
+			$player->blockJump();
+			
+		}else{
+			$player->doubleJump();
+		}
 		
 		if(!$attr->isDoubleJumped and $attr->isBlockJumped){
 			$player->setCanDoubleJump();
