@@ -160,4 +160,8 @@ class AthleticPlayer{
 			))), 1
 		);
 	}
+	
+	public function hasJumpedFlags():bool{
+		return $this->attr->isDoubleJumped or $this->attr->isBlockJumped;
+	}
 }
