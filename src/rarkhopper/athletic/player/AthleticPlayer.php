@@ -12,7 +12,8 @@ use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
 use rarkhopper\athletic\AthleticPlugin;
-use rarkhopper\athletic\event\PlayerDoubleJumpEvent;
+use rarkhopper\athletic\event\AthleticPlayerDoubleJumpEvent;
+use rarkhopper\athletic\event\AthleticPlayerSlidingEvent;
 use rarkhopper\athletic\sound\BlockJumpSound;
 use rarkhopper\athletic\sound\DoubleJumpSound;
 use rarkhopper\athletic\sound\SlidingSound;
@@ -57,7 +58,10 @@ class AthleticPlayer{
 	}
 	
 	public function doubleJump():void{
-		(new PlayerDoubleJumpEvent($this->player, false))->call();
+		$ev = new AthleticPlayerDoubleJumpEvent($this, false);
+		$ev->call();
+		
+		if($ev->isCancelled()) return;
 		$this->attr->isDoubleJumped = true;
 		$this->attr->isJumping = false;
 		$this->player->getWorld()->addSound($this->player->getPosition(), new DoubleJumpSound);
@@ -65,7 +69,10 @@ class AthleticPlayer{
 	}
 	
 	public function blockJump():void{
-		(new PlayerDoubleJumpEvent($this->player, true))->call();
+		$ev = new AthleticPlayerDoubleJumpEvent($this, true);
+		$ev->call();
+		
+		if($ev->isCancelled()) return;
 		$this->attr->isBlockJumped = true;
 		$this->attr->isBlockJumping = false;
 		$this->player->getWorld()->addSound($this->player->getPosition(), new BlockJumpSound);
@@ -96,41 +103,48 @@ class AthleticPlayer{
 	}
 	
 	public function sliding():void{
-		$pure = $this->getPure();
-		$direction = $pure->getDirectionPlane()->multiply(0.7);
-		$motion = new Vector3($direction->x, -0.4, $direction->y);
-		$pure->setMotion($motion);
+		$ev = new AthleticPlayerSlidingEvent($this);
+		$ev->call();
+		
+		if($ev->isCancelled()) return;
 		$this->attr->isSliding = true;
+		$this->addSlidingMotion();
 		$this->player->getWorld()->addSound($this->player->getPosition(), new SlidingSound);
-		$pure->setSwimming();
+		$this->player->setSwimming();
 		
 		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
 			new ClosureTask(fn() => $this->stopSliding($this)), 15
 		);
 	}
 	
+	public function addSlidingMotion():void{
+		$direction = $this->player->getDirectionPlane()->multiply(0.7);
+		$motion = new Vector3($direction->x, -0.4, $direction->y);
+		$this->player->setMotion($motion);
+	}
+	
 	private function stopSliding(AthleticPlayer $player):void{
-		if(!$player->getAttribute()->isSliding) return;
-		$pure = $player->getPure();
-		$topBlock = $pure->getWorld()->getBlock($pure->getPosition()->add(0, 1, 0));
+		$topBlock = $this->player->getWorld()->getBlock($this->player->getPosition()->add(0, 1, 0));
 		$player->getAttribute()->isSliding = false;
 		
 		if($topBlock->isSolid()){
 			$player->getAttribute()->keepSliding = true;
 			
 		}else{
-			$pure->setSwimming(false);
+			$this->player->setSwimming(false);
 			AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
-				new ClosureTask(fn() => $this->cancelSneak($pure)), 1
+				new ClosureTask(fn() => $this->cancelSneak()), 1
 			);
 		}
 	}
 	
-	private function cancelSneak(Player $player):void{
-		if(!$player->isOnline()) return;
-		$player->toggleSneak(false);
-		$vec = BlockPosition::fromVector3($player->getPosition()->add(0, 0, 0));
-		$player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
+	public function cancelSneak():void{
+		$pure = $this->player;
+		
+		if(!$pure->isOnline()) return;
+		$pure->toggleSneak(false);
+		$vec = BlockPosition::fromVector3($pure->getPosition()->add(0, 0, 0));
+		$pure->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
 			$vec,
 			RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::WATER()->getFullId()),
 			UpdateBlockPacket::FLAG_NETWORK,
@@ -138,7 +152,7 @@ class AthleticPlayer{
 		));
 		
 		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
-			new ClosureTask(fn() => $player->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
+			new ClosureTask(fn() => $pure->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
 				$vec,
 				RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::AIR()->getFullId()),
 				UpdateBlockPacket::FLAG_NETWORK,

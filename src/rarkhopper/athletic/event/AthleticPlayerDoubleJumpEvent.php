@@ -5,15 +5,14 @@ namespace rarkhopper\athletic\event;
 
 use pocketmine\event\Cancellable;
 use pocketmine\event\CancellableTrait;
-use pocketmine\event\player\PlayerEvent;
-use pocketmine\player\Player;
+use rarkhopper\athletic\player\AthleticPlayer;
 
-class PlayerDoubleJumpEvent extends PlayerEvent implements Cancellable{
+class AthleticPlayerDoubleJumpEvent extends AthleticPlayerEvent implements Cancellable{
 	use CancellableTrait;
 	protected bool $isBlockJump;
 	
-	public function __construct(Player $player, bool $isBlockJump){
-		$this->player = $player;
+	public function __construct(AthleticPlayer $player, bool $isBlockJump){
+		parent::__construct($player);
 		$this->isBlockJump = $isBlockJump;
 	}
 	

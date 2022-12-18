@@ -38,9 +38,8 @@ trait BlockJumpTrait{
 		];
 		foreach($list as $block){
 			foreach($block->getCollisionBoxes() as $bb){
-				if($bb->expandedCopy(0.5, 0.0, 0.5)->intersectsWith($entity->getBoundingBox())){
-					return true;
-				}
+				if(!$bb->expandedCopy(0.5, 0.0, 0.5)->intersectsWith($entity->getBoundingBox())) continue;
+				return true;
 			}
 		}
 		return false;
