@@ -186,12 +186,18 @@ class AthleticPlayer{
 		));
 		
 		AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
-			new ClosureTask(fn() => $pure->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
-				$vec,
-				RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::AIR()->getFullId()),
-				UpdateBlockPacket::FLAG_NETWORK,
-				UpdateBlockPacket::DATA_LAYER_LIQUID
-			))), 1
+			new ClosureTask(
+				function() use($pure, $vec){
+					if(!$pure->isOnline()) return;
+					$pure->getNetworkSession()->sendDataPacket(UpdateBlockPacket::create(
+						$vec,
+						RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::AIR()->getFullId()),
+						UpdateBlockPacket::FLAG_NETWORK,
+						UpdateBlockPacket::DATA_LAYER_LIQUID
+					));
+				}
+			),
+			1
 		);
 	}
 	

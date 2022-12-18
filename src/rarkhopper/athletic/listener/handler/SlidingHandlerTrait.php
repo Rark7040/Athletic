@@ -3,8 +3,13 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
+use pocketmine\block\VanillaBlocks;
+use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSwimEvent;
+use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\scheduler\ClosureTask;
 use rarkhopper\athletic\AthleticPlugin;
 use rarkhopper\athletic\player\AthleticPlayer;
@@ -49,5 +54,11 @@ trait SlidingHandlerTrait{
 		if($attr->isSliding){
 			$ev->cancel();
 		}
+	}
+	
+	public function onDeath(PlayerDeathEvent $ev):void{
+		$pos = $ev->getPlayer()->getPosition();
+		$pos->getWorld()->broadcastPacketToViewers($pos, LevelEventPacket::create(LevelEvent::PARTICLE_DESTROY,RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::RED_GLAZED_TERRACOTTA()->getFullId()), $pos->add(0, 1, 0)));
+		$pos->getWorld()->broadcastPacketToViewers($pos,LevelEventPacket::create(LevelEvent::PARTICLE_DESTROY, RuntimeBlockMapping::getInstance()->toRuntimeId(VanillaBlocks::REDSTONE()->getFullId()), $pos->add(0, 1, 0)));
 	}
 }
