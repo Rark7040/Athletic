@@ -22,6 +22,12 @@ trait SlidingHandlerTrait{
 		}
 	}
 	
+	/**
+	 * @param PlayerToggleSwimEvent $ev
+	 * @return void
+	 *
+	 * A packet is sent from the client side to stop swimming when there is no solid block above the head and not underwater.
+	 */
 	public function onToggleSwim(PlayerToggleSwimEvent $ev):void{
 		$athleticPlayer = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		$player = $athleticPlayer->getPlayer();
