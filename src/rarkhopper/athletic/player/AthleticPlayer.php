@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\player;
 
+use LogicException;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
@@ -22,6 +23,12 @@ class AthleticPlayer{
 	private Player $player;
 	private PlayerAthleticAttribute $attr;
 	
+	/**
+	 * @param Player $player
+	 * @internal
+	 *
+	 * {@see AthleticPlayerMap::get()}
+	 */
 	public function __construct(Player $player){
 		$this->player = $player;
 		$this->attr = new PlayerAthleticAttribute;
@@ -30,7 +37,8 @@ class AthleticPlayer{
 	/**
 	 * @return Player
 	 */
-	public function getPure():Player{
+	public function getPlayer():Player{
+		if(!$this->player->isOnline()) throw new LogicException("player is not connected");
 		return $this->player;
 	}
 	
@@ -125,6 +133,13 @@ class AthleticPlayer{
 		$this->attr->isBlockJumped = false;
 	}
 	
+	public function onSneak():void{
+		$player = $this->getPlayer();
+
+		if(!$player->isSprinting() or $player->isOnGround() or $this->getAttribute()->isDoubleJumped) return;
+		$this->sliding();
+	}
+	
 	/**
 	 * @return void
 	 * player perform sliding
@@ -162,7 +177,7 @@ class AthleticPlayer{
 			
 			//数ティック送らせないと水を設置する座標がずれる
 			AthleticPlugin::getTaskScheduler()->scheduleDelayedTask(
-				new ClosureTask(fn() => $this->cancelSneak()), 2
+				new ClosureTask(fn() => $this->cancelSneak()), 3
 			);
 		}
 	}

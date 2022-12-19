@@ -7,12 +7,12 @@ use rarkhopper\athletic\event\AthleticPlayerFallEvent;
 use rarkhopper\athletic\player\AthleticPlayer;
 
 trait UpdateOnGroundAttributeTrait{
-	private function updateOnGroundAttr(AthleticPlayer $player):void{
-		$attr = $player->getAttribute();
+	private function updateOnGroundAttr(AthleticPlayer $athleticPlayer):void{
+		$attr = $athleticPlayer->getAttribute();
 		
-		if($player->getPure()->isOnGround()){
+		if($athleticPlayer->getPlayer()->isOnGround()){
 			if(!$attr->isOnGround){
-				(new AthleticPlayerFallEvent($player))->call();
+				(new AthleticPlayerFallEvent($athleticPlayer))->call();
 			}
 			$attr->isOnGround = true;
 			

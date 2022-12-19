@@ -7,16 +7,16 @@ use pocketmine\event\Event;
 use rarkhopper\athletic\player\AthleticPlayer;
 
 abstract class AthleticPlayerEvent extends Event{
-	protected AthleticPlayer $player;
+	protected AthleticPlayer $athleticPlayer;
 	
-	public function __construct(AthleticPlayer $player){
-		$this->player = $player;
+	public function __construct(AthleticPlayer $athleticPlayer){
+		$this->athleticPlayer = $athleticPlayer;
 	}
 	
 	/**
 	 * @return AthleticPlayer
 	 */
 	public function getAthleticPlayer():AthleticPlayer{
-		return $this->player;
+		return $this->athleticPlayer;
 	}
 }

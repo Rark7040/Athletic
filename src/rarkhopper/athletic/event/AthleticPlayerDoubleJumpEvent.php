@@ -11,8 +11,8 @@ class AthleticPlayerDoubleJumpEvent extends AthleticPlayerEvent implements Cance
 	use CancellableTrait;
 	protected bool $isBlockJump;
 	
-	public function __construct(AthleticPlayer $player, bool $isBlockJump){
-		parent::__construct($player);
+	public function __construct(AthleticPlayer $athleticPlayer, bool $isBlockJump){
+		parent::__construct($athleticPlayer);
 		$this->isBlockJump = $isBlockJump;
 	}
 	
