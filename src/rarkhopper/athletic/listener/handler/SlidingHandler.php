@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSwimEvent;
 use pocketmine\scheduler\ClosureTask;
 use rarkhopper\athletic\AthleticPlugin;
 use rarkhopper\athletic\player\AthleticPlayerMap;
 
-trait SlidingHandlerTrait{
+/**
+ * @internal
+ */
+class SlidingHandler implements Listener{
 	public function onToggleSneak(PlayerToggleSneakEvent $ev):void{
 		$athleticPlayer = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		

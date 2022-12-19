@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJumpEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use rarkhopper\athletic\player\AthleticPlayerMap;
 
-
-trait DoubleJumpHandlerTrait{
+/**
+ * @internal
+ */
+class DoubleJumpHandler implements Listener{
 	public function onJump(PlayerJumpEvent $ev):void{
 		$player = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		
