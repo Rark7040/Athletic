@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\task;
 
-use rarkhopper\athletic\event\PlayerFallOnGroundEvent;
+use rarkhopper\athletic\event\AthleticPlayerFallEvent;
 use rarkhopper\athletic\player\AthleticPlayer;
 
 trait UpdateOnGroundAttributeTrait{
-	private function updateOnGroundAttr(AthleticPlayer $player):void{
-		$attr = $player->getAttribute();
+	private function updateOnGroundAttr(AthleticPlayer $athleticPlayer):void{
+		$attr = $athleticPlayer->getAttribute();
 		
-		if($player->getPure()->isOnGround()){
+		if($athleticPlayer->getPlayer()->isOnGround()){
 			if(!$attr->isOnGround){
-				(new PlayerFallOnGroundEvent($player->getPure()))->call();
+				(new AthleticPlayerFallEvent($athleticPlayer))->call();
 			}
 			$attr->isOnGround = true;
 			

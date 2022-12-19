@@ -8,26 +8,23 @@ use pocketmine\entity\Entity;
 use rarkhopper\athletic\player\AthleticPlayer;
 
 trait BlockJumpTrait{
-	private function checkBlockJump(AthleticPlayer $player):void{
-		$attr = $player->getAttribute();
+	private function checkBlockJump(AthleticPlayer $athleticPlayer):void{
+		$attr = $athleticPlayer->getAttribute();
 		
-		if(!$player->validateGameMode()) return;
-		if(!$player->canAthleticAction()) return;
+		if(!$athleticPlayer->canAthleticAction()) return;
 		if($attr->isBlockJumped) return;
-		if(!$this->isOnAir($player->getPure()) or $attr->isOnGround) return;
-		if(!$this->isCollidedBlock($player->getPure())) return;
-		$player->setCanBlockJump();
+		if(!$this->isMidAir($athleticPlayer->getPlayer()) or $attr->isOnGround) return;
+		if(!$this->isCollidedBlockOutside($athleticPlayer->getPlayer())) return;
+		$athleticPlayer->setAbleBlockJump();
 	}
 	
-	private function isOnAir(Entity $entity):bool{
+	private function isMidAir(Entity $entity):bool{
 		$world = $entity->getWorld();
 		$v = $entity->getPosition()->asVector3()->floor();
-		$block = $world->getBlock($v->add(0, 1, 0));
-		
-		return !$block->isSolid();
+		return !$world->getBlock($v->add(0, 1, 0))->isSolid();
 	}
 	
-	private function isCollidedBlock(Entity $entity):bool{
+	private function isCollidedBlockOutside(Entity $entity):bool{
 		$world = $entity->getWorld();
 		$v = $entity->getPosition()->asVector3()->floor();
 		/**
@@ -41,9 +38,8 @@ trait BlockJumpTrait{
 		];
 		foreach($list as $block){
 			foreach($block->getCollisionBoxes() as $bb){
-				if($bb->expandedCopy(0.5, 0.0, 0.5)->intersectsWith($entity->getBoundingBox())){
-					return true;
-				}
+				if(!$bb->expandedCopy(0.5, 0.0, 0.5)->intersectsWith($entity->getBoundingBox())) continue;
+				return true;
 			}
 		}
 		return false;
