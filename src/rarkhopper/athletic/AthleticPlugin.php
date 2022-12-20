@@ -5,7 +5,7 @@ namespace rarkhopper\athletic;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\TaskScheduler;
-use rarkhopper\athletic\listener\EventListener;
+use rarkhopper\athletic\listener\AthleticEventListeners;
 use rarkhopper\athletic\task\EachPlayersTask;
 
 class AthleticPlugin extends PluginBase{
@@ -13,8 +13,11 @@ class AthleticPlugin extends PluginBase{
 	
 	protected function onEnable():void{
 		self::$taskScheduler = $this->getScheduler();
-		$this->getServer()->getPluginManager()->registerEvents(new EventListener, $this);
 		$this->getScheduler()->scheduleRepeatingTask(new EachPlayersTask, 1);
+		
+		foreach((new AthleticEventListeners())->getListeners() as $listener){
+			$this->getServer()->getPluginManager()->registerEvents($listener, $this);
+		}
 	}
 	
 	public static function getTaskScheduler():TaskScheduler{

@@ -36,6 +36,7 @@ class AthleticPlayer{
 	
 	/**
 	 * @return Player
+	 * @throws LogicException
 	 */
 	public function getPlayer():Player{
 		if(!$this->player->isOnline()) throw new LogicException("player is not connected");
@@ -54,15 +55,8 @@ class AthleticPlayer{
 	 * if returned false, then can not perform the actions
 	 */
 	public function canAthleticAction():bool{
-		return $this->attr->allowAthleticAction and $this->validateGameMode();
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function validateGameMode():bool{
 		$gameMode = $this->player->getGamemode();
-		return GameMode::SURVIVAL()->equals($gameMode) or GameMode::ADVENTURE()->equals($gameMode);
+		return $this->attr->allowAthleticAction and (GameMode::SURVIVAL()->equals($gameMode) or GameMode::ADVENTURE()->equals($gameMode));
 	}
 	
 	/**

@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerGameModeChangeEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use rarkhopper\athletic\player\AthleticPlayerMap;
 
-trait ClearAttributesHandlerTrait{
+/**
+ * @internal
+ */
+class ClearAttributesListener implements Listener{
 	public function onQuit(PlayerQuitEvent $ev):void{
 		$this->removeAthleticPlayer($ev->getPlayer());
 	}
