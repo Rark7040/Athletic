@@ -11,7 +11,7 @@ use rarkhopper\athletic\player\AthleticPlayerMap;
 /**
  * @internal
  */
-class CancelFallDamageHandler implements Listener{
+class CancelFallDamageListener implements Listener{
 	public function onDamage(EntityDamageEvent $ev):void{
 		if($ev->getCause() !== EntityDamageEvent::CAUSE_FALL) return;
 		$entity = $ev->getEntity();

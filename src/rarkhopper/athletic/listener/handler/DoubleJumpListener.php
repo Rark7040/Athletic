@@ -11,7 +11,7 @@ use rarkhopper\athletic\player\AthleticPlayerMap;
 /**
  * @internal
  */
-class DoubleJumpHandler implements Listener{
+class DoubleJumpListener implements Listener{
 	public function onJump(PlayerJumpEvent $ev):void{
 		$player = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		

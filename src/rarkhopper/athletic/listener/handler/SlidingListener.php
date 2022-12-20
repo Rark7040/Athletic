@@ -13,7 +13,7 @@ use rarkhopper\athletic\player\AthleticPlayerMap;
 /**
  * @internal
  */
-class SlidingHandler implements Listener{
+class SlidingListener implements Listener{
 	public function onToggleSneak(PlayerToggleSneakEvent $ev):void{
 		$athleticPlayer = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		
@@ -34,11 +34,9 @@ class SlidingHandler implements Listener{
 	 */
 	public function onToggleSwim(PlayerToggleSwimEvent $ev):void{
 		$athleticPlayer = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
-		$player = $athleticPlayer->getPlayer();
 		$attr = $athleticPlayer->getAttribute();
-		$topBlock = $player->getWorld()->getBlock($player->getPosition()->add(0, 1, 0));
 		
-		if($attr->keepSliding and !$topBlock->isSolid()){
+		if($attr->keepSliding){
 			//頭上のブロックがsolidではないかつ、水中ではないのでkeep終了
 			if($ev->isSwimming()) return;
 			$attr->keepSliding = false;

@@ -13,7 +13,7 @@ use rarkhopper\athletic\player\AthleticPlayerMap;
 /**
  * @internal
  */
-class ClearAttributesHandler implements Listener{
+class ClearAttributesListener implements Listener{
 	public function onQuit(PlayerQuitEvent $ev):void{
 		$this->removeAthleticPlayer($ev->getPlayer());
 	}

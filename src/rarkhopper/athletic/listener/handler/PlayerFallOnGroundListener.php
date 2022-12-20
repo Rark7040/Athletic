@@ -9,7 +9,7 @@ use rarkhopper\athletic\event\AthleticPlayerHitGroundEvent;
 /**
  * @internal
  */
-class PlayerFallOnGroundHandler implements Listener{
+class PlayerFallOnGroundListener implements Listener{
 	public function onHitGround(AthleticPlayerHitGroundEvent $ev):void{
 		$ev->getAthleticPlayer()->resetJumpAttributes();
 	}
