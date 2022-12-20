@@ -1,6 +1,6 @@
 {
   "name": "rarkhopper/athletic",
-  "license": "MIT",
+  "license": "PolyForm Internal Use License 1.0.0",
   "description": "",
   "require": {
     "php": "8.0.16.*",

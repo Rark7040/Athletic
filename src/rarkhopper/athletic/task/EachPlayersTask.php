@@ -7,6 +7,9 @@ use pocketmine\scheduler\Task;
 use pocketmine\Server;
 use rarkhopper\athletic\player\AthleticPlayerMap;
 
+/**
+ * @internal
+ */
 class EachPlayersTask extends Task{
 	use BlockJumpTrait;
 	use UpdateOnGroundAttributeTrait;

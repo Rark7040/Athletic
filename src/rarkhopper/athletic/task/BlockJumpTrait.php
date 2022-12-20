@@ -7,6 +7,9 @@ use pocketmine\block\Block;
 use pocketmine\entity\Entity;
 use rarkhopper\athletic\player\AthleticPlayer;
 
+/**
+ * @internal
+ */
 trait BlockJumpTrait{
 	private function checkBlockJump(AthleticPlayer $athleticPlayer):void{
 		$attr = $athleticPlayer->getAttribute();

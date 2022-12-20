@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace rarkhopper\athletic\listener\handler;
 
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSwimEvent;
 use pocketmine\scheduler\ClosureTask;
 use rarkhopper\athletic\AthleticPlugin;
 use rarkhopper\athletic\player\AthleticPlayerMap;
 
-trait SlidingHandlerTrait{
+/**
+ * @internal
+ */
+class SlidingListener implements Listener{
 	public function onToggleSneak(PlayerToggleSneakEvent $ev):void{
 		$athleticPlayer = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		
@@ -22,6 +26,12 @@ trait SlidingHandlerTrait{
 		}
 	}
 	
+	/**
+	 * @param PlayerToggleSwimEvent $ev
+	 * @return void
+	 *
+	 * A packet is sent from the client side to stop swimming when there is no solid block above the head and not underwater.
+	 */
 	public function onToggleSwim(PlayerToggleSwimEvent $ev):void{
 		$athleticPlayer = AthleticPlayerMap::getInstance()->get($ev->getPlayer());
 		$attr = $athleticPlayer->getAttribute();
